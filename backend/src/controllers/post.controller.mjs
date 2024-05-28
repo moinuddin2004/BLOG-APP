@@ -18,10 +18,10 @@ const createPost = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if ([title, description].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
-    }
-    // req.files?.thumbnail[0]?.path;
-    const thumbnailLocalPath = req.file?.path;
-    console.log(thumbnailLocalPath);
+  }
+  // req.files?.thumbnail[0]?.path;
+  const thumbnailLocalPath = req.file?.path;
+  console.log(thumbnailLocalPath);
   if (!thumbnailLocalPath) {
     throw new ApiError(400, "Thumbnail is required");
   }
@@ -30,7 +30,7 @@ const createPost = asyncHandler(async (req, res) => {
     title,
     description,
     thumbnail: thumbnail.url,
-    owner:userId,
+    owner: userId,
   });
   const createdPost = await Post.findById(post._id);
 
@@ -43,9 +43,42 @@ const createPost = asyncHandler(async (req, res) => {
 });
 
 const getAllPosts = asyncHandler(async (req, res) => {
-   
-  const allPosts = await Post.find({})
- 
+  const allPosts = await Post.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "ownerDetails",
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              username: 1,
+              fullName: 1,
+              email: 1,
+              avatar: 1,
+              createdAt: 1,
+              updatedAt: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        owner: {
+          $arrayElemAt: ["$ownerDetails", 0],
+        },
+      },
+    },
+    {
+      $project: {
+        ownerDetails: 0,
+      },
+    },
+  ]);
+
   // console.log(allPosts);
   // Check if any posts are found
   if (!allPosts || allPosts.length === 0) {
@@ -55,7 +88,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
   // Return the list of posts
   return res
     .status(200)
-    .json(new ApiResponse(200,allPosts, "Posts fetched successfully"));
+    .json(new ApiResponse(200, allPosts, "Posts fetched successfully"));
 });
 
 const getUserAllPosts = asyncHandler(async (req, res) => {
@@ -74,6 +107,39 @@ const getUserAllPosts = asyncHandler(async (req, res) => {
         owner: new mongoose.Types.ObjectId(userId),
       },
     },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "ownerDetails",
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              username: 1,
+              fullName: 1,
+              email: 1,
+              avatar: 1,
+              createdAt: 1,
+              updatedAt: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        owner: {
+          $arrayElemAt: ["$ownerDetails", 0],
+        },
+      },
+    },
+    {
+      $project: {
+        ownerDetails: 0,
+      },
+    },
   ]);
 
   if (!posts || posts.length === 0) {
@@ -83,12 +149,12 @@ const getUserAllPosts = asyncHandler(async (req, res) => {
   // Return the fetched posts
   return res
     .status(200)
-    .json(new ApiResponse(200,posts, "User's posts fetched successfully"));
+    .json(new ApiResponse(200, posts, "User's posts fetched successfully"));
 });
 const getPost = asyncHandler(async (req, res) => {
   // Fetch a single post from the database by ID
-    const postId = req.params.postId;
-    console.log(postId);
+  const postId = req.params.postId;
+  console.log(postId);
   const post = await Post.findById(postId);
 
   // Check if the post is found
@@ -99,22 +165,22 @@ const getPost = asyncHandler(async (req, res) => {
   // Return the post as the response
   return res
     .status(200)
-    .json(new ApiResponse(200,post, "Post fetched successfully"));
+    .json(new ApiResponse(200, post, "Post fetched successfully"));
 });
 
 const updatePost = asyncHandler(async (req, res) => {
-    const { title,description } = req.body;
+  const { title, description } = req.body;
   const postId = req.params.postId;
   if ([title, description].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
   }
-console.log(title,description);
+  console.log(title, description);
   const updatedPost = await Post.findByIdAndUpdate(
     postId,
     {
-      $set:{
-        title:title,
-        description:description,
+      $set: {
+        title: title,
+        description: description,
       },
     },
     { new: true }
@@ -122,12 +188,11 @@ console.log(title,description);
 
   return res
     .status(200)
-    .json(new ApiResponse(200,updatedPost, "Post updated successfully"));
+    .json(new ApiResponse(200, updatedPost, "Post updated successfully"));
 });
 
-
-const updateThumbnail = asyncHandler(async (req, res) => { 
-    const postId = req.params.postId;
+const updateThumbnail = asyncHandler(async (req, res) => {
+  const postId = req.params.postId;
   const thumbnailLocalPath = req.file?.path;
   if (!thumbnailLocalPath) {
     throw new ApiError(400, "Thumbnail is required");
@@ -145,23 +210,24 @@ const updateThumbnail = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200,updatedPostWithThumbnail, "Post updated successfully")
+      new ApiResponse(
+        200,
+        updatedPostWithThumbnail,
+        "Post updated successfully"
+      )
     );
-  
-})
+});
 
 const deletePost = asyncHandler(async (req, res) => {
-    const postId = req.params.postId;
-   const deletedPost = await Post.findByIdAndDelete(postId);
-    if (!deletedPost) { 
-        throw new ApiError(404, "Post not found in delete");
-    }
+  const postId = req.params.postId;
+  const deletedPost = await Post.findByIdAndDelete(postId);
+  if (!deletedPost) {
+    throw new ApiError(404, "Post not found in delete");
+  }
   return res
     .status(200)
-    .json(new ApiResponse(200,null, "Post deleted successfully"));
-
- })
-
+    .json(new ApiResponse(200, null, "Post deleted successfully"));
+});
 
 const addLikes = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
@@ -195,21 +261,26 @@ const disLike = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, post, "Post disliked successfully"));
 });
 
-
-
-
-const getLikes = asyncHandler(async (req, res) => { 
+const getLikes = asyncHandler(async (req, res) => {
   const postId = req.params.postId;
   const post = await Post.findById(postId);
   if (!post) {
     throw new ApiError(404, "Post not found");
   }
-  return res.status(200).json(new ApiResponse(200, post.likes.length, "Post liked successfully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, post.likes.length, "Post liked successfully"));
+});
 
-})
-
-
-
-
-
- export { createPost, getAllPosts, getUserAllPosts, getPost, updatePost, deletePost,updateThumbnail,addLikes ,getLikes,disLike};
+export {
+  createPost,
+  getAllPosts,
+  getUserAllPosts,
+  getPost,
+  updatePost,
+  deletePost,
+  updateThumbnail,
+  addLikes,
+  getLikes,
+  disLike,
+};

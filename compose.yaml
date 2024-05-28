@@ -1,0 +1,37 @@
+version: "3.8"
+services:
+  web:
+    image: moinuddin2004/web
+    depends_on:
+      - api
+    ports:
+      - 5173:5173
+    # environment:
+    #   VITE_API_URL: http://api:3000
+    develop:
+      watch:
+        - path: ./frontend/package.json
+          action: rebuild
+        - path: ./frontend/package-lock.json
+          action: rebuild
+        - path: ./frontend
+          target: /app
+          action: sync
+
+  api:
+    image: moinuddin2004/api
+    ports:
+      - 3000:3000
+    environment:
+      MONGODB_URL: mongodb+srv://syedmoinuddin:moin1234@cluster0.iiql1rp.mongodb.net/blog?retryWrites=true&w=majority
+    env_file:
+      - ./backend/.env
+    develop:
+      watch:
+        - path: ./backend/package.json
+          action: rebuild
+        - path: ./backend/package-lock.json
+          action: rebuild
+        - path: ./backend
+          target: /app
+          action: sync

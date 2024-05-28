@@ -6,6 +6,7 @@ import Header from "./components/header/header.jsx";
 import Footer from "./components/footer/Footer.jsx";
 import { Outlet } from "react-router-dom";
 import axios from "axios";
+// import { BackgroundGradientAnimation } from "./components/ui/background-gradient-animation.js";
 
 
 function App() {
@@ -56,12 +57,13 @@ function App() {
 
   return (
     <>
-     
+       
       <div>
-        <Header />
-        <Outlet />
-        <Footer />
+          <Header />
+          <Outlet />
+          <Footer/>
       </div>
+     
     </>
   );
 }

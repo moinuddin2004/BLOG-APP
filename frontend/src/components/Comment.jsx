@@ -60,43 +60,68 @@ const Comment = ({ _id, content, owner, likes, onDelete }) => {
   };
 
   return (
-    <>
+    <div className="border-2 border-red-500 p-4  rounded-lg m-3 bg-purple-200">
       {updating ? (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex items-center">
           <input
             type="text"
             defaultValue={newContent}
             {...register("content")}
+            className="border-2 border-gray-400 rounded-md p-1 mr-2"
           />
-          <button type="submit">Update</button>
-          <button onClick={() => setUpdating(false)}>Cancel</button>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-2 py-1 rounded-md"
+          >
+            Update
+          </button>
+          <button
+            onClick={() => setUpdating(false)}
+            className="bg-gray-500 text-white px-2 py-1 rounded-md ml-2"
+          >
+            Cancel
+          </button>
         </form>
       ) : (
-        <div>
-          <img src={owner[0].avatar} alt={owner[0]._id} />
-          <p>{owner[0].username}</p>
-          <p>{newContent}</p>
-          <span
-            className={`fas fa-heart ${
-              liked ? "text-red-500" : "text-gray-500"
-            }`}
-            onClick={handleLike}
-            style={{ cursor: "pointer" }}
-          ></span>
-          <span className="ml-1">{like}</span>
+        <div className="flex items-center">
+          <img
+            src={owner[0].avatar}
+            alt={owner[0]._id}
+            className="w-8 h-8 rounded-full mr-2"
+          />
+          <div>
+            <div className="flex items-center">
+              <p className="font-bold">{owner[0].username}</p>
+              <span
+                className={`fas fa-heart ml-2 ${
+                  liked ? "text-red-500" : "text-gray-500"
+                } cursor-pointer`}
+                onClick={handleLike}
+              />
+              <span className="ml-1">{like}</span>
+            </div>
+            <div className=" border-2 rounded-md w-auto bg-pink-200">{newContent}</div>
+          </div>
+
           {isAuthor && (
-            <>
-              <Btn bgColor="bg-green-500" onClick={() => setUpdating(true)}>
+            <div className="ml-auto">
+              <button
+                className="bg-green-500 text-white px-2 py-1 rounded-md"
+                onClick={() => setUpdating(true)}
+              >
                 Update
-              </Btn>
-              <Btn bgColor="bg-red-500" onClick={handleDeleteComment}>
+              </button>
+              <button
+                className="bg-red-500 text-white px-2 py-1 rounded-md ml-2"
+                onClick={handleDeleteComment}
+              >
                 Delete
-              </Btn>
-            </>
+              </button>
+            </div>
           )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

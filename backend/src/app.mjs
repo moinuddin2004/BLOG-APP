@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 import cookieParser from "cookie-parser";
 const app = express();
 app.use(
@@ -12,6 +13,8 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true,limit:"16kb" }));    
 app.use(express.static("public"));
 app.use(cookieParser());
+// const __dirname = path.resolve();
+// app.use(express.static(path.join(__dirname, 'dist')));
 
 
 //import router
@@ -24,7 +27,9 @@ import commentRouter from "./routes/comment.routes.mjs";
 app.use("/api/v1/users",userRouter)
 app.use("/api/v1/posts",postRouter)
 app.use("/api/v1/comments", commentRouter);
-
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "dist", "index.html"));
+// });
 
 export  {app}
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, PostForm } from "../components";
-// import appwriteService from "../appwrite/database";
+
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -8,6 +8,7 @@ function EditPost() {
   const [post, setPost] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
+  
      useEffect(() => {
        (async () => {
          const response = await axios.get(`/api/v1/posts/post/${id}`);
@@ -15,18 +16,10 @@ function EditPost() {
          setPost(response.data.data);
        })();
      }, [id, navigate]);
-    // if (slug) {
-    //   appwriteService.getPost(slug).then((post) => {
-    //     if (post) {
-    //       setPosts(post);
-    //     }
-    //   });
-    // } else {
-    //   navigate("/");
-    // }
+   
  
   return post ? (
-    <div className="py-8">
+    <div className=" bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 py-5">
       <Container>
         <PostForm post={post} />
       </Container>
