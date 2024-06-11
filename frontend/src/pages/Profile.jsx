@@ -59,13 +59,19 @@ function Profile() {
   };
 
   return (
-    <div className="w-full py-8   bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <div className="w-full py-8   bg-gradient-to-br from-blue-300 via-pink-200 to-red-100">
       <Container>
+      <img
+        src="/logo.svg"
+        alt=""
+        className="bg-transparent mix-blend-multiply h-[50px] w-[200px] fixed top-[50px]"
+      />
         <div className="flex  mb-8  mt-[100px] items-center gap-7">
           <img
             src={userData.avatar}
             alt=""
-            className="rounded-full w-40 h-40 mb-2  border-4  border-blue-700 "/>
+            className="rounded-full w-40 h-40 mb-2  border-4  border-blue-700 "
+          />
           <div>
             <h3 className="text-2xl font-bold  ">{userData.fullName}</h3>
             <p className="text-gray-600">Email: {userData.email}</p>

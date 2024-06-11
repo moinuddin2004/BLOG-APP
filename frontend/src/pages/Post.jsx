@@ -71,8 +71,13 @@ export default function Post() {
   // const isImage = post.thumbnail.includes("/image")
 
   return post && isThumbnailValid ? (
-    <div className="py-8  bg-gradient-to-br from-purple-400 via-blue-500 to-purple-500">
+    <div className="py-8  bg-gradient-to-br from-blue-300 via-pink-200 to-red-100">
       <Container>
+      <img
+        src="/logo.svg"
+        alt=""
+        className="bg-transparent mix-blend-multiply h-[50px] w-[200px] fixed top-[50px]"
+      />
         <div className="   mt-[100px] flex justify-center  mb-4   rounded-xl ">
           {isImage ? (
             <img
@@ -81,10 +86,13 @@ export default function Post() {
               className="rounded-xl  border-4   "
             />
           ) : (
-              <video className="rounded-xl  border-4 max-w-[3
+            <video
+              className="rounded-xl  border-4 max-w-[3
             
             
-            00px] " controls>
+            00px] "
+              controls
+            >
               <source src={post.thumbnail} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
